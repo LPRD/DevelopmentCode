@@ -1,4 +1,5 @@
 #include<Servo.h>
+#include<Wire.h>
 Servo servo1;
 Servo servo2;
 
@@ -30,15 +31,15 @@ float gyro_7 = -.030;
 float gyro_6 = -.030;
 float gyro_5 = .000;
 float gyro_4 = .000;
-float gyro_3 = .050;
-float gyro_2 = .050;
-float gyro_1 = .050;
+float gyro_3 = .070;
+float gyro_2 = .070;
+float gyro_1 = .070;
 float gyro_0 = .000;
 float dataTime = .001;      // time between data (assuming interrupts)
 
 // Offsets to make servos align vertically at exactly v=90
-int servo1Offset = 8;
-int servo2Offset = 8;
+int servo1Offset = 4;       // 4 for MG995
+int servo2Offset = 0;       // 0 for MG995
 int v = 90;
 int vMax = 12;              // max angular deflection (avoids stall)
 
@@ -49,6 +50,8 @@ void setup() {
   servo2.attach(10);
   Serial.begin(19200);
   Serial.println("  Ready");
+    Serial.print("  v = ");
+    Serial.println(v);
   servo1.write(v + servo1Offset);
   servo2.write(v + servo2Offset);
   delay(1000);              // remove for final use
@@ -58,7 +61,7 @@ void setup() {
 void loop() {
   // Proportional
   //roll = gyro_y;
-  roll = (gyro_1 + gyro_2)/2;   // averaging helpful for instantaneous errors
+  roll = (gyro_1 + gyro_2)/2;   // averaging against instantaneous errors
   rollProp = roll - rollTarget;
 
   // Integrated
@@ -79,7 +82,7 @@ void loop() {
         servo1.write(v + servo1Offset);
         servo2.write(v + servo2Offset);
         
-
+        // prints angle components to serial
         Serial.print  ("  90");
         Serial.print  ("  +  ");
         Serial.print  (Kp*rollProp);
