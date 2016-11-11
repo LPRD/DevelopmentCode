@@ -49,6 +49,6 @@ double getAngle (int potPin)
 
 double getPressure (int pressurePin) 
 {
-    double PSIG = getVout(pressurePin) * 246.58 - 118.33;
+    double PSIG = getVout(pressurePin) * 251.28 - 106.14;
     return PSIG;
 } 
