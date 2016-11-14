@@ -2,16 +2,16 @@
 #define PERIOD 1000
 
 //Define Analog Pins used
-int pressurePinKerosene = 0;
-int pressurePinOxygen = 1;
+int pressurePinIn = 0;
+int pressurePinOut = 1;
 int potPin = 2;
 unsigned long int last_run_time = 0;
 void setup() 
 {
   Serial.begin (9600);
   pinMode (potPin, INPUT);
-  pinMode (pressurePinOxygen, INPUT);
-  pinMode (pressurePinKerosene, INPUT) ;
+  pinMode (pressurePinIn, INPUT);
+  pinMode (pressurePinOut, INPUT) ;
 }
 
 void loop() 
@@ -19,10 +19,8 @@ void loop()
   if (millis() > last_run_time + PERIOD) 
   {
   last_run_time = millis ();
-  Serial.print ("Pressure Kerosene ");
-  Serial.println (getPressure (pressurePinKerosene));
-  Serial.print ("Pressure Oxygen ");
-  Serial.println (getPressure (pressurePinOxygen));
+  Serial.print ("Pressure Drop: ");
+  Serial.println (getPressure(pressurePinIn) - getPressure(pressurePinOut));
   Serial.print ("Angle (Degrees): ");
   Serial.println (getAngle(potPin));
   }
