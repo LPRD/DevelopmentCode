@@ -1,11 +1,16 @@
+#include <Telemetry.h>
+
 //Define the period of data collection here
 #define PERIOD 1000
+
+//SEND macros
 
 //Define Analog Pins used
 int pressurePinIn = 0;
 int pressurePinOut = 1;
 int potPin = 2;
 unsigned long int last_run_time = 0;
+
 void setup() 
 {
   Serial.begin (9600);
@@ -20,9 +25,16 @@ void loop()
   {
   last_run_time = millis ();
   Serial.print ("Pressure Drop: ");
-  Serial.println (getPressure(pressurePinIn) - getPressure(pressurePinOut));
+  double pressureDrop = getPressure(pressurePinIn) - getPressure(pressurePinOut);
+  Serial.println (pressureDrop);
   Serial.print ("Angle (Degrees): ");
-  Serial.println (getAngle(potPin));
+  double angle = getAngle(potPin);
+  Serial.println (angle);
+
+  BEGIN_SEND
+  SEND_ITEM(pressure, pressureDrop)
+  SEND_ITEM(angle, angle);
+  END_SEND
   }
 }
 
