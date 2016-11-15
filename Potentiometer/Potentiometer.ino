@@ -3,8 +3,6 @@
 //Define the period of data collection here
 #define PERIOD 1000
 
-//SEND macros
-
 //Define Analog Pins used
 int pressurePinIn = 0;
 int pressurePinOut = 1;
@@ -23,18 +21,14 @@ void loop()
 {
   if (millis() > last_run_time + PERIOD) 
   {
-  last_run_time = millis ();
-  Serial.print ("Pressure Drop: ");
-  double pressureDrop = getPressure(pressurePinIn) - getPressure(pressurePinOut);
-  Serial.println (pressureDrop);
-  Serial.print ("Angle (Degrees): ");
-  double angle = getAngle(potPin);
-  Serial.println (angle);
+    last_run_time = millis ();
+    double pressureDrop = getPressure(pressurePinIn) - getPressure(pressurePinOut);
+    double angle = getAngle(potPin);
 
-  BEGIN_SEND
-  SEND_ITEM(pressure, pressureDrop)
-  SEND_ITEM(angle, angle);
-  END_SEND
+    BEGIN_SEND
+    SEND_ITEM(pressure, pressureDrop)
+    SEND_ITEM(angle, angle);
+    END_SEND
   }
 }
 
@@ -52,7 +46,7 @@ double getVout (int pin)
 
 double getAngle (int potPin)
 {
-  double angle = getVout(potPin) * 180 / 3.13;
+  double angle = fabs(getVout(potPin) * 180 / 3.13 - 157.25);
   return angle; 
 }
 
