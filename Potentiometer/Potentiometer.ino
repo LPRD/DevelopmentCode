@@ -2,7 +2,7 @@
 
 //Define the period of data collection here
 #define PERIOD 1000
-
+//#define DEBUG
 //Define Analog Pins used
 int pressurePinIn = 0;
 int pressurePinOut = 1;
@@ -22,6 +22,10 @@ void loop()
   if (millis() > last_run_time + PERIOD) 
   {
     last_run_time = millis ();
+#ifdef DEBUG
+    Serial.println (getVout(pressurePinIn));
+    Serial.println (getPressure(pressurePinIn));
+#endif
     double pressureDrop = getPressure(pressurePinIn) - getPressure(pressurePinOut);
     double angle = getAngle(potPin);
 
@@ -53,6 +57,6 @@ double getAngle (int potPin)
 
 double getPressure (int pressurePin) 
 {
-    double PSIG = getVout(pressurePin) * 251.28 - 106.14;
+    double PSIG = getVout(pressurePin) * 246.58 - 118.33;
     return PSIG;
 } 
