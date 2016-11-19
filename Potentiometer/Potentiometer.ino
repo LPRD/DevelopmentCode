@@ -2,18 +2,22 @@
 
 //Define the period of data collection here
 #define PERIOD 10
-#define DEBUG
+//#define DEBUG
+
+//#define FUEL
 
 //Define Analog Pins used
-int pressurePinIn = 0;
-int pressurePinOut = 1;
-int potPin = 2;
+int pressurePinIn = 4;
+int pressurePinOut = 5;
+int potPinOxydizer = 1;
+int potPinFuel = 0;
 unsigned long int last_run_time = 0;
 
 void setup() 
 {
   Serial.begin (115200);
-  pinMode (potPin, INPUT);
+  pinMode (potPinOxydizer, INPUT);
+  pinMode (potPinFuel, INPUT);
   pinMode (pressurePinIn, INPUT);
   pinMode (pressurePinOut, INPUT) ;
 }
@@ -25,47 +29,52 @@ void loop()
     last_run_time = millis ();
     
 #ifdef DEBUG
-    Serial.println (getVout(pressurePinIn));
-    //Serial.println (getPressure(pressurePinIn ));
-    Serial.println (getVout(pressurePinOut));
-    //Serial.println (getPressure(pressurePinOut));
-#endif
+   Serial.println (analogRead (pressurePinIn) * 5 /1024.);
+   Serial.println (analogRead (pressurePinOut) * 5 /1024.);
 
+#else
     double pressureIn = getPressure(pressurePinIn);
     double pressureOut = getPressure(pressurePinOut);
     double pressureDrop = pressureIn - pressureOut;
-    double angle = getAngle(potPin);
-
+    
+#ifdef FUEL
+    int angleFuel = getAngleFuel(potPinFuel);
+#else
+    int angleOxydizer = getAngleOxydizer (potPinOxydizer);
+#endif
+    
     BEGIN_SEND
     SEND_ITEM(pressure_in,pressureIn);
     SEND_ITEM(pressure_out,pressureOut);
-    SEND_ITEM(pressure_drop, pressureDrop);
-    SEND_ITEM(angle, angle);
+    SEND_ITEM(pressure_drop,pressureDrop);
+    
+#ifdef FUEL
+    SEND_ITEM(angle, angleFuel);
+#else
+    SEND_ITEM(angle, angleOxydizer);
+#endif
+
     END_SEND
+#endif
   }
 }
 
-int getDAC (int potPin) 
+double getPressure (int pin) 
 {
-  int DAC = analogRead (potPin); 
-  return DAC;
+    double PSIG = (analogRead (pin)* 5/ 1024.) * 246.58 - 118.33;
+    return PSIG;
+} 
+
+double getAngleOxydizer (int pin)
+{
+  double angle = fabs((analogRead(pin) * 5 /1024. ) * 180 / 3.13 - 154.25);
+  return angle; 
 }
 
-double getVout (int pin)
+double getAngleFuel (int pin)
 {
- double Vout = getDAC(pin) * 5 / 1024. ;
- return Vout;
-}
-
-double getAngle (int potPin)
-{
-  double angle = fabs(getVout(potPin) * 180 / 3.13 - 157.25);
+  double angle = fabs((analogRead(pin) * 5 /1024. ) * 180 / 3.13 - 249.25);
   return angle; 
 }
 
 
-double getPressure (int pressurePin) 
-{
-    double PSIG = getVout(pressurePin) * 246.58 - 118.33;
-    return PSIG;
-} 
