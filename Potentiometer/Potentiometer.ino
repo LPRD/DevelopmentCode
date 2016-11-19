@@ -1,8 +1,9 @@
 #include <Telemetry.h>
 
 //Define the period of data collection here
-#define PERIOD 1000
-//#define DEBUG
+#define PERIOD 10
+#define DEBUG
+
 //Define Analog Pins used
 int pressurePinIn = 0;
 int pressurePinOut = 1;
@@ -11,7 +12,7 @@ unsigned long int last_run_time = 0;
 
 void setup() 
 {
-  Serial.begin (9600);
+  Serial.begin (115200);
   pinMode (potPin, INPUT);
   pinMode (pressurePinIn, INPUT);
   pinMode (pressurePinOut, INPUT) ;
@@ -22,15 +23,23 @@ void loop()
   if (millis() > last_run_time + PERIOD) 
   {
     last_run_time = millis ();
+    
 #ifdef DEBUG
     Serial.println (getVout(pressurePinIn));
-    Serial.println (getPressure(pressurePinIn));
+    //Serial.println (getPressure(pressurePinIn ));
+    Serial.println (getVout(pressurePinOut));
+    //Serial.println (getPressure(pressurePinOut));
 #endif
-    double pressureDrop = getPressure(pressurePinIn) - getPressure(pressurePinOut);
+
+    double pressureIn = getPressure(pressurePinIn);
+    double pressureOut = getPressure(pressurePinOut);
+    double pressureDrop = pressureIn - pressureOut;
     double angle = getAngle(potPin);
 
     BEGIN_SEND
-    SEND_ITEM(pressure, pressureDrop)
+    SEND_ITEM(pressure_in,pressureIn);
+    SEND_ITEM(pressure_out,pressureOut);
+    SEND_ITEM(pressure_drop, pressureDrop);
     SEND_ITEM(angle, angle);
     END_SEND
   }
