@@ -1,0 +1,6 @@
+*~
+*__pycache__*
+.temp_log.json
+.fuse_hidden*
+build
+.init_*

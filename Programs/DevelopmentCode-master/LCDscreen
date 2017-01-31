@@ -1,0 +1,32 @@
+Arduino code for Potentiometer
+
+#include <LiquidCrystal.h>
+
+int opotpin = //whatever pin it’s on.
+int kpotpin = //whatever pin
+String one, two, stringO, stringK;
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+void setup()
+{
+    lcd.begin(16, 2);
+    pinmode(opotpin, INPUT); 
+    pinmode(kpotpin, INPUT);
+    Serial.begin(9600);
+    String one = "O2 Degrees: "; 
+    String two = "K Degrees: ";
+} 
+
+void loop()
+{
+      double odegrees = (analogRead(opotpin)/1023.0 * 270;
+      double kdegrees = (analogRead(kpotpin)/1023.0 * 270;
+      String stringO = one + odegrees; 
+      String stringK = two + kdegrees;
+      lcd.print(stringO);
+      lcd.setCursor(0, 1); //set cursor to 2nd row
+      lcd.print(stringK);
+      Serial.println(odegrees);
+      Serial.println(kdegrees);
+
+}
