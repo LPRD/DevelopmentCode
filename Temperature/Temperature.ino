@@ -9,7 +9,6 @@
 Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
 unsigned long last_run_time = 0;
 
-
 void setup() {
   while (!Serial); // wait for Serial on Leonardo/Zero, etc
   Serial.begin(9600);

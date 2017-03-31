@@ -4,8 +4,6 @@
 #define PERIOD 10
 //#define DEBUG
 
-#define FUEL
-
 #define PRESSURE_CALIBRATION_FACTOR 246.58
 #define ANGLE_CALIBRATION_FACTOR 57.5
 #define PRESSURE_OFFSET 118.33
@@ -43,22 +41,16 @@ void loop()
     double pressureOut = getPressure(pressurePinOut);
     double pressureDrop = pressureIn - pressureOut;
     
-#ifdef FUEL
     int angleFuel = getAngleFuel(potPinFuel);
-#else
     int angleOxydizer = getAngleOxydizer (potPinOxydizer);
-#endif
     
     BEGIN_SEND
     SEND_ITEM(pressure_in,pressureIn);
     SEND_ITEM(pressure_out,pressureOut);
     SEND_ITEM(pressure_drop,pressureDrop);
     
-#ifdef FUEL
-    SEND_ITEM(angle, angleFuel);
-#else
-    SEND_ITEM(angle, angleOxydizer);
-#endif
+    SEND_ITEM(fuel_angle, angleFuel);
+    SEND_ITEM(oxygen_angle, angleOxydizer);
 
     END_SEND
 #endif
