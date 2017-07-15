@@ -6,13 +6,14 @@
 
 #define PRESSURE_CALIBRATION_FACTOR 246.58
 #define ANGLE_CALIBRATION_FACTOR 57.5
-#define PRESSURE_OFFSET 118.33
-#define ANGLE_OFFSET_OXYDIZER 154.25
-#define ANGLE_OFFSET_FUEL 249.25
+#define PRESSURE_OFFSET_IN 111.0
+#define PRESSURE_OFFSET_OUT 118.7
+#define ANGLE_OFFSET_OXYDIZER 257.25
+#define ANGLE_OFFSET_FUEL 159.25
 
 //Define Analog Pins used
-int pressurePinIn = 5;
-int pressurePinOut = 4;
+int pressurePinIn = 4;
+int pressurePinOut = 5;
 int potPinOxydizer = 1;
 int potPinFuel = 0;
 unsigned long int last_run_time = 0;
@@ -37,8 +38,8 @@ void loop()
    Serial.println (analogRead (pressurePinOut) * 5 /1024.);
 
 #else
-    double pressureIn = getPressure(pressurePinIn);
-    double pressureOut = getPressure(pressurePinOut);
+    double pressureIn = getPressureIn(pressurePinIn);
+    double pressureOut = getPressureOut(pressurePinOut);
     double pressureDrop = pressureIn - pressureOut;
     
     int angleFuel = getAngleFuel(potPinFuel);
@@ -57,9 +58,15 @@ void loop()
   }
 }
 
-double getPressure (int pin) 
+double getPressureIn (int pin) 
 {
-    double PSIG = (analogRead (pin)* 5/ 1024.) * PRESSURE_CALIBRATION_FACTOR - PRESSURE_OFFSET;
+    double PSIG = (analogRead (pin)* 5/ 1024.) * PRESSURE_CALIBRATION_FACTOR - PRESSURE_OFFSET_IN;
+    return PSIG;
+}
+
+double getPressureOut (int pin) 
+{
+    double PSIG = (analogRead (pin)* 5/ 1024.) * PRESSURE_CALIBRATION_FACTOR - PRESSURE_OFFSET_OUT;
     return PSIG;
 } 
 
@@ -74,5 +81,3 @@ double getAngleFuel (int pin)
   double angle = fabs((analogRead(pin) * 5 /1024. ) * ANGLE_CALIBRATION_FACTOR - ANGLE_OFFSET_FUEL);
   return angle; 
 }
-
-
